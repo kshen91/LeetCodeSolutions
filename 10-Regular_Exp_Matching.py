@@ -21,9 +21,7 @@ def isPattern(s, p):
     firstMatch = len(s) != 0 and (p[0] in {s[0], '.'})
 
     if len(p) >= 2 and p[1] == '*':
-        if firstMatch:
-            return isPattern(s[1:], p)
-        return isPattern(s, p[2:])
+        return (firstMatch and isPattern(s[1:], p)) or isPattern(s, p[2:])
 
     return (firstMatch and isPattern(s[1:], p[1:]))
 
@@ -39,12 +37,9 @@ def isPatternRecursiveWithMemo(s, p):
             return i == len(s)
 
         firstMatch = i < len(s) and p[j] in {s[i],'.'}
-
+        
         if j <= len(p)-2 and p[j+1] == '*':
-            if firstMatch:
-                ans = isPatternRecursive(i+1, j)
-            else:
-                ans = isPatternRecursive(i, j+2)
+            ans = (firstMatch and isPatternRecursive(i+1, j)) or isPatternRecursive(i, j+2)
         else:
             ans = firstMatch and isPatternRecursive(i+1, j+1)
 
@@ -52,22 +47,3 @@ def isPatternRecursiveWithMemo(s, p):
         return ans
 
     return isPatternRecursive(0, 0)
-
-@timing
-def isPatternDP(s, p):
-    i = len(s) - 1
-    j = len(p) - 1
-
-    while (i > 0 and j > 0):
-        if p[j] in {s[i], '.'}:
-            i -= 1
-            j -= 1
-        elif p[j] == '*' and j >= 1:
-            if p[j-1] == s[i]:
-                i -= 1
-            else:
-                j -= 2
-        else:
-            return False
-
-    return (i==0)
