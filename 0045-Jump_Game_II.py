@@ -1,5 +1,3 @@
-from collections import deque
-
 class Solution(object):
         
     def jump(self, nums):
